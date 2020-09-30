@@ -11,12 +11,6 @@ RUN if [ "${INSTALL_DOCKER}" = "true" ]; then \
     fi \
     && rm -rf /tmp/scripts && apt-get clean -y
 
-RUN export DEBIAN_FRONTEND=noninteractive \
-    && apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0 \
-    && sudo apt-add-repository -u https://cli.github.com/packages \
-    && apt-get update \
-    && apt-get -y install --no-install-recommends gh 
-
 USER codespace
 
 RUN npm install -g @angular/cli 
