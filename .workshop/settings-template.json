@@ -1,0 +1,16 @@
+{
+    "AzureOwnerSPN":"",
+    "AzureOwnerSPNSecret":"",
+    "TenantID":"",
+    "AzDoPAT":"",
+    "AzDoOrganization":"",
+    "StudentNickName":"",
+    "ResourceGroupLocation":"westeurope",
+    "ResourceGroupName":"fabmedical-",
+    "GithubToken":"",
+    "TargetRepo":"",
+    "WorkItemIdModule1": "",
+    "WorkItemIdModule2": "",
+    "WorkItemIdModule3": "",
+    "WorkItemIdModule4": ""
+}
