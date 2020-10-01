@@ -32,6 +32,11 @@ else {
   $current = $template
 }
 
+$repo = $(git remote get-url origin)
+$default = Get-Default @($current.TargetRepo, $template.TargetRepo, $repo)
+$current.TargetRepo = Get-Default @((Read-Host -Prompt "Github reporitory url ($default)"), $default)
+Set-Content $settingsPath (ConvertTo-Json $current) 
+
 if ($current.GithubToken)
 {
   Write-Host "A Github token is already stored. Overwrite?"
@@ -54,7 +59,7 @@ if (-not ($current.GithubToken))
 Set-Content $settingsPath (ConvertTo-Json $current) 
 
 $default = Get-Default @($current.AzDoOrganization, $template.AzDoOrganization)
-$current.AzDoOrganization = (Read-Host -Prompt "Azure DevOps Organization ($default)") ?? $default
+$current.AzDoOrganization = @((Read-Host -Prompt "Azure DevOps Organization ($default)"), $default)
 Set-Content $settingsPath (ConvertTo-Json $current) 
 
 if ($current.AzDoPAT)
@@ -77,11 +82,11 @@ if (-not ($current.AzDoPAT))
 Set-Content $settingsPath (ConvertTo-Json $current) 
 
 $default = Get-Default @($current.AzDoProject, $template.AzDoProject, "CodeToCloud-Workshop")
-$current.AzDoProject = (Read-Host -Prompt "Azure DevOps Project Name ($default)") ?? $default
+$current.AzDoProject = Get-Default @((Read-Host -Prompt "Azure DevOps Project Name ($default)"), $default)
 Set-Content $settingsPath (ConvertTo-Json $current) 
 
 $default = Get-Default @($current.Student, $template.Student, "student")
-$current.Student = (Read-Host -Prompt "Student ($default)") ?? $default
+$current.Student = Get-Default @((Read-Host -Prompt "Student ($default)"), $default)
 Set-Content $settingsPath (ConvertTo-Json $current) 
 
 # Check if project exists, create if needed.
