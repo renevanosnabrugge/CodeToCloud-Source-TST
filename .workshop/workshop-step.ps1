@@ -8,6 +8,8 @@ param(
     [string]$Action
 )
 
+#Requires -Version 7.0
+
 $settingsDirectory = join-path $(git rev-parse --show-toplevel) ".workshop"
 $settingsFile = join-path $settingsDirectory "settings.json"
 $container = "ghcr.io/xpiritbv/ghws-fix"

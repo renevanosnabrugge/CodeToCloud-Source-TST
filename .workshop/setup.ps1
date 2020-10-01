@@ -3,6 +3,8 @@ param
     [string] $GH_Token
 )
 
+#Requires -Version 7.0
+
 function Get-Default {
   [CmdletBinding()]
   param(
