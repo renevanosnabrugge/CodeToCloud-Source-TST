@@ -105,17 +105,20 @@ $workitems = @(az boards query --wiql "SELECT [System.Id] FROM workitems WHERE [
 #if ($workitems.Count -eq 4)
 # delete work items if they exist?
 
-Write-Host "Create workitems?"
-Switch (Read-Host "(y/N)") 
+Write-Host "(Re)create workitems?"
+Switch -Regex (Read-Host "(Y/n)") 
 { 
-  Y { 
+   "(|[yY])" { 
+    if ($workitems.count -gt 0)
+    {
+      $workitems | %{ az boards work-item delete --id $_.id --yes --project $current.AzDoProject --org https://dev.azure.com/$($current.AzDoOrganization) } | Out-Null
+    }
+
     $current.WorkItemIdModule1 = ( az boards work-item create --type "Issue" --title "Module 1" --project $current.AzDoProject --org https://dev.azure.com/$($current.AzDoOrganization) | ConvertFrom-Json ).id
     $current.WorkItemIdModule2 = ( az boards work-item create --type "Issue" --title "Module 2" --project $current.AzDoProject --org https://dev.azure.com/$($current.AzDoOrganization) | ConvertFrom-Json ).id
     $current.WorkItemIdModule3 = ( az boards work-item create --type "Issue" --title "Module 3" --project $current.AzDoProject --org https://dev.azure.com/$($current.AzDoOrganization) | ConvertFrom-Json ).id
     $current.WorkItemIdModule4 = ( az boards work-item create --type "Issue" --title "Module 4" --project $current.AzDoProject --org https://dev.azure.com/$($current.AzDoOrganization) | ConvertFrom-Json ).id
-    } 
+  } 
 } 
 
 Set-Content $settingsPath (ConvertTo-Json $current) 
-
-
