@@ -20,13 +20,13 @@ function Get-Default {
   }
 }
 
-$templatePath = (join-path $PSScriptRoot ".\settings-template.json")
-$settingsPath = (join-path $PSScriptRoot ".\settings.json")
+$templatePath = (join-path $PSScriptRoot "settings-template.json")
+$settingsPath = (join-path $PSScriptRoot "settings.json")
 
 $template = Get-Content $templatePath | ConvertFrom-Json
 
 if (Test-Path -PathType Leaf $settingsPath) {
-  $current = Get-Content (join-path $PSScriptRoot ".\settings.json") | ConvertFrom-Json
+  $current = Get-Content (join-path $PSScriptRoot "settings.json") | ConvertFrom-Json
 }
 else {
   $current = $template
@@ -59,7 +59,7 @@ if (-not ($current.GithubToken))
 Set-Content $settingsPath (ConvertTo-Json $current) 
 
 $default = Get-Default @($current.AzDoOrganization, $template.AzDoOrganization)
-$current.AzDoOrganization = @((Read-Host -Prompt "Azure DevOps Organization ($default)"), $default)
+$current.AzDoOrganization = Get-Default @((Read-Host -Prompt "Azure DevOps Organization ($default)"), $default)
 Set-Content $settingsPath (ConvertTo-Json $current) 
 
 if ($current.AzDoPAT)
@@ -89,8 +89,33 @@ $default = Get-Default @($current.Student, $template.Student, "student")
 $current.Student = Get-Default @((Read-Host -Prompt "Student ($default)"), $default)
 Set-Content $settingsPath (ConvertTo-Json $current) 
 
+#login to azure devops
+$env:AZURE_DEVOPS_EXT_PAT = $current.AzDoPAT
+
 # Check if project exists, create if needed.
+$projectExists = ((az devops project list --org https://dev.azure.com/$($current.AzDoOrganization) | ConvertFrom-Json).value | ?{ $_.name -eq $current.AzDoProject } ).count -gt 0
+
+if (-not ($projectExists))
+{
+  az devops project create --name $current.AzDoProject --org https://dev.azure.com/$($current.AzDoOrganization) --process "basic"
+}
+
 # create work items
+$workitems = @(az boards query --wiql "SELECT [System.Id] FROM workitems WHERE [System.TeamProject] = '$($current.AzDoProject)' AND [System.WorkItemType] = 'Issue' AND [System.Title] CONTAINS 'Module'" --project $current.AzDoProject --org https://dev.azure.com/$($current.AzDoOrganization) | ConvertFrom-Json)
+#if ($workitems.Count -eq 4)
+# delete work items if they exist?
+
+Write-Host "Create workitems?"
+Switch (Read-Host "(y/N)") 
+{ 
+  Y { 
+    $current.WorkItemIdModule1 = ( az boards work-item create --type "Issue" --title "Module 1" --project $current.AzDoProject --org https://dev.azure.com/$($current.AzDoOrganization) | ConvertFrom-Json ).id
+    $current.WorkItemIdModule2 = ( az boards work-item create --type "Issue" --title "Module 2" --project $current.AzDoProject --org https://dev.azure.com/$($current.AzDoOrganization) | ConvertFrom-Json ).id
+    $current.WorkItemIdModule3 = ( az boards work-item create --type "Issue" --title "Module 3" --project $current.AzDoProject --org https://dev.azure.com/$($current.AzDoOrganization) | ConvertFrom-Json ).id
+    $current.WorkItemIdModule4 = ( az boards work-item create --type "Issue" --title "Module 4" --project $current.AzDoProject --org https://dev.azure.com/$($current.AzDoOrganization) | ConvertFrom-Json ).id
+    } 
+} 
 
 Set-Content $settingsPath (ConvertTo-Json $current) 
+
 
