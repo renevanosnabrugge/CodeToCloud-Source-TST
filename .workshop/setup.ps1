@@ -108,7 +108,7 @@ $workitems = @(az boards query --wiql "SELECT [System.Id] FROM workitems WHERE [
 Write-Host "(Re)create workitems?"
 Switch -Regex (Read-Host "(Y/n)") 
 { 
-   "(|[yY])" { 
+   "(^$|[yY])" { 
     if ($workitems.count -gt 0)
     {
       $workitems | %{ az boards work-item delete --id $_.id --yes --project $current.AzDoProject --org https://dev.azure.com/$($current.AzDoOrganization) } | Out-Null
