@@ -22,6 +22,7 @@ if (-not (Test-Path -PathType Leaf $settingsFile))
 
 
 try {
+    Write-Host "Running Exercise $Exercise"
     & docker build -t $container $($settingsDirectory) | Out-Null
     & docker run -e ACTION=$Action -e EXERCISE=$Exercise $container
 }
