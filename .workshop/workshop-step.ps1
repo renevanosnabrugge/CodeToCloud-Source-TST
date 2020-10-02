@@ -1,11 +1,12 @@
 param(
     [Parameter(Mandatory)]
     [ValidateNotNullOrEmpty()]
-    [string]$Exercise,
+    [ValidateSet('Start','Solution')]
+    [string]$Action,
     [Parameter(Mandatory)]
     [ValidateNotNullOrEmpty()]
-    [ValidateSet('Start','Solution')]
-    [string]$Action
+    [string]$Exercise
+
 )
 
 #Requires -Version 7.0
