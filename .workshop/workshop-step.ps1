@@ -12,12 +12,18 @@ param(
 
 $settingsDirectory = join-path $(git rev-parse --show-toplevel) ".workshop"
 $settingsFile = join-path $settingsDirectory "settings.json"
-$container = "ghcr.io/xpiritbv/ghws-fix"
+$container = "localexercise"
 
 if (-not (Test-Path -PathType Leaf $settingsFile))
 {
     throw "Couldn't find settings file: $settingsFile"
 }
 
-$dockerCommand = "docker run -e ACTION=$Action -e EXERCISE=$Exercise -e settingsLocation=/settings/settings.json -v $($settingsDirectory):/settings $container"
-Invoke-Expression -Command $dockerCommand
+
+try {
+    & docker build -t $container $($settingsDirectory) | Out-Null
+    & docker run -e ACTION=$Action -e EXERCISE=$Exercise $container
+}
+finally {
+    & docker rmi -f $container | Out-Null
+}
