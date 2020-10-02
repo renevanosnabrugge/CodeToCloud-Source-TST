@@ -3,6 +3,7 @@
     "AzDoPAT": "",
     "AzDoOrganization": "OrganizationName",
     "AzDoProject": "CodeToCloud-Workshop",
+    "TargetRepo":"",
     "GithubToken": "",
     "WorkItemIdModule1": "",
     "WorkItemIdModule2": "",
