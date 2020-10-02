@@ -99,6 +99,13 @@ if (-not ($projectExists))
 {
   az devops project create --name $current.AzDoProject --org https://dev.azure.com/$($current.AzDoOrganization) --process "basic"
 }
+else {
+  $project = az devops project show --project $current.AzDoProject --org https://dev.azure.com/$($current.AzDoOrganization) | ConvertFrom-Json 
+  if ($project.capabilities.processTemplate.templateName -ne "Basic")
+  {
+    throw "Target project must be configured to use the 'Basic' process."
+  }
+}
 
 # create work items
 $workitems = @(az boards query --wiql "SELECT [System.Id] FROM workitems WHERE [System.TeamProject] = '$($current.AzDoProject)' AND [System.WorkItemType] = 'Issue' AND [System.Title] CONTAINS 'Module'" --project $current.AzDoProject --org https://dev.azure.com/$($current.AzDoOrganization) | ConvertFrom-Json)
@@ -111,13 +118,14 @@ Switch -Regex (Read-Host "(Y/n)")
    "(^$|[yY])" { 
     if ($workitems.count -gt 0)
     {
-      $workitems | %{ az boards work-item delete --id $_.id --yes --project $current.AzDoProject --org https://dev.azure.com/$($current.AzDoOrganization) } | Out-Null
+      $workitems | %{ 
+        az boards work-item delete --id $_.id --yes --project $current.AzDoProject --org https://dev.azure.com/$($current.AzDoOrganization) | Out-Null
+      }
     }
 
-    $current.WorkItemIdModule1 = ( az boards work-item create --type "Issue" --title "Module 1" --project $current.AzDoProject --org https://dev.azure.com/$($current.AzDoOrganization) | ConvertFrom-Json ).id
-    $current.WorkItemIdModule2 = ( az boards work-item create --type "Issue" --title "Module 2" --project $current.AzDoProject --org https://dev.azure.com/$($current.AzDoOrganization) | ConvertFrom-Json ).id
-    $current.WorkItemIdModule3 = ( az boards work-item create --type "Issue" --title "Module 3" --project $current.AzDoProject --org https://dev.azure.com/$($current.AzDoOrganization) | ConvertFrom-Json ).id
-    $current.WorkItemIdModule4 = ( az boards work-item create --type "Issue" --title "Module 4" --project $current.AzDoProject --org https://dev.azure.com/$($current.AzDoOrganization) | ConvertFrom-Json ).id
+    @(1,2,3,4) | %{
+      $current.$("WorkItemIdModule$($_)") = ( az boards work-item create --type "Issue" --title "Module $_" --project $current.AzDoProject --org https://dev.azure.com/$($current.AzDoOrganization) | ConvertFrom-Json ).id
+    }
   } 
 } 
 
