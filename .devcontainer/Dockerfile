@@ -18,3 +18,5 @@ RUN npm install -g @angular/cli
 RUN az extension add --name azure-devops \
     && az extension add --name application-insights \
     && az extension add --name portal
+
+ADD keybindings.json /home/codespace/keybindings.json
