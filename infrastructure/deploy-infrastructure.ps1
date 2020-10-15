@@ -48,5 +48,7 @@ az webapp config container set `
 --name $($webappName) `
 --resource-group $resourcegroupName 
 
+
+az extension add --name application-insights
 az monitor app-insights component create --app $appInsights --location $location1 --kind web -g $resourcegroupName --application-type web --retention-time 120
 
