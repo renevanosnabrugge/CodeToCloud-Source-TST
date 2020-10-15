@@ -13,9 +13,6 @@ on:
   # Run tests for any PRs.
   pull_request:
 
-env:
-  BUILD_NUMBER: 1.0.$GITHUB_RUN_ID
-
 jobs:
   push:
     runs-on: ubuntu-latest
@@ -26,11 +23,6 @@ jobs:
       - name: Log into GitHub Container Registry
         run: echo "${{ secrets.CR_PAT }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Replace Docker Images with BuildNumber Tag
-        shell: pwsh
-        run: |
-          (Get-Content .\docker-compose.yml) -replace ':latest',':$BUILD_NUMBER' | Set-Content .\docker-compose.yml
-        
       - name: Build and Push image
         run: |
           docker-compose -f docker-compose.yml -f build.docker-compose.yml build
