@@ -1,4 +1,4 @@
-name: Fabrikam Web Build
+name: Fabrikam Web Build 
 
 on:
   push:
