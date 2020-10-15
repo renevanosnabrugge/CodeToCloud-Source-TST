@@ -5,6 +5,7 @@ $webappName = "fabmedical-web-" + $studentprefix
 $planName = "fabmedical-plan-" + $studentprefix
 $location1 = "westeurope"
 $location2 = "northeurope"
+$appInsights = "fabmedicalai-" + $studentsuffix
 
 #First create a group
 $resultRG = az group create --name $resourcegroupName --location $location1 | ConvertFrom-Json
@@ -23,3 +24,5 @@ az appservice plan create --name $planName --resource-group $resourcegroupName -
 
 #Create a Azure Web App with NGINX container
 az webapp create --resource-group $resourcegroupName --plan $planName --name $webappName -i nginx
+
+az monitor app-insights component create --app $appInsights --location $location1 --kind web -g $resourcegroupName --application-type web --retention-time 120
