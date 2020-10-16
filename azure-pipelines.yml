@@ -16,7 +16,7 @@ steps:
           containerregistrytype: 'Container Registry'
           dockerRegistryEndpoint: 'GitHub Container Registry'
           dockerComposeFile: '**/docker-compose.yml'
-          additionalDockerComposeFiles: '**/build.docker-compose.yml'
+          additionalDockerComposeFiles: '**/build-docker-compose.yml'
           action: 'Build services'
           additionalImageTags: '$(Build.BuildNumber)'
       - task: DockerCompose@0
@@ -24,6 +24,6 @@ steps:
           containerregistrytype: 'Container Registry'
           dockerRegistryEndpoint: 'GitHub Container Registry'
           dockerComposeFile: '**/docker-compose.yml'
-          additionalDockerComposeFiles: '**/build.docker-compose.yml'
+          additionalDockerComposeFiles: '**/build-docker-compose.yml'
           action: 'Push services'
           additionalImageTags: '$(Build.BuildNumber)'
