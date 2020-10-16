@@ -9,8 +9,6 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-variables:
-
 stages:
   - stage: DeployProd
     jobs:
