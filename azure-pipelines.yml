@@ -19,7 +19,6 @@ variables:
 
 stages:
   - stage: DeployProd
-    dependsOn: build
     jobs:
     - deployment: infrastructure
       strategy:
