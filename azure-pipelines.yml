@@ -10,12 +10,6 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-- name: WebApp.Name
-  value: initialValue 
-- name: WebApp.ResourceGroupName
-  value: initialValue 
-- name: WebApp.Plan
-  value: initialValue 
 
 stages:
   - stage: DeployProd
@@ -34,3 +28,5 @@ stages:
                   scriptLocation: 'scriptPath'
                   scriptPath: './infrastructure/deploy-infrastructure.ps1'
                   arguments: 'tst'
+                env:
+                  CR_PAT: $(CR_PAT)
