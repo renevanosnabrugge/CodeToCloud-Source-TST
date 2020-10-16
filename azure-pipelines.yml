@@ -9,6 +9,14 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+- name: WebApp.Name
+  value: initialValue 
+- name: WebApp.ResourceGroupName
+  value: initialValue 
+- name: WebApp.Plan
+  value: initialValue 
+
 stages:
   - stage: build
     jobs:
@@ -35,3 +43,18 @@ stages:
 
   - stage: DeployProd
     dependsOn: build
+    jobs:
+    - deployment: infrastructure
+      environment: production
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - checkout: self
+              - task: AzureCLI@2
+                inputs:
+                  azureSubscription: 'Fabrikam Azure'
+                  scriptType: 'pscore'
+                  scriptLocation: 'scriptPath'
+                  scriptPath: './infrastructure/deploy-infrastucture.ps1'
+                  arguments: 'tst'
